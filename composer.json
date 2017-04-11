@@ -4,7 +4,7 @@
     "type": "library",
     "license": "MIT",
     "version": "1.0",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "keywords": [
         "trietree",
         "trie"
