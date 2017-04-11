@@ -24,3 +24,8 @@ var_dump($res);
 $res = $trieTree->search("我叫李四喜");
 var_dump($res);
 ```
+
+composer安装
+```
+composer require abelzhou/php-trie-tree
+```
