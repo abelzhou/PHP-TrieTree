@@ -1,0 +1,26 @@
+{
+    "name": "abelzhou/php-trie-tree",
+    "description": "Make a trie tree with php language.",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0",
+    "minimum-stability": "stable",
+    "keywords": [
+        "trietree",
+        "trie"
+    ],
+    "authors": [
+        {
+            "name": "AbelZhou",
+            "email": "abel.zhou@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": ">5.3.0"
+    },
+    "autoload":{
+        "psr-4":{
+            "AbelZhou\\TrieTree\\":"src/"
+        }
+    }
+}
