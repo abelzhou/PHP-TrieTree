@@ -3,7 +3,6 @@
     "description": "Make a trie tree with php language.",
     "type": "library",
     "license": "MIT",
-    "minimum-stability": "dev",
     "keywords": [
         "trietree",
         "trie"
