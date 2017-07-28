@@ -22,14 +22,14 @@ foreach ($testArr as $str){
     $tree->append($str);
 }
 
-$res = $trieTree->getTree();
+$res = $tree->getTree();
 
 var_dump($res);
 
-$res = $trieTree->search("有一个叫张三的哥们");
+$res = $tree->search("有一个叫张三的哥们");
 var_dump($res);
 
-$res = $trieTree->search("我叫李四喜");
+$res = $tree->search("我叫李四喜");
 var_dump($res);
 ```
 
