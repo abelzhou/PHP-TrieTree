@@ -75,7 +75,7 @@ class TrieTree {
     }
 
     /**
-     * 最佳一个字[中英文]到树中
+     * 追加一个字[中英文]到树中
      * @param $tree
      * @param $code
      * @param $word
