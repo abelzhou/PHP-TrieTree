@@ -18,7 +18,7 @@
     },
     "autoload":{
         "psr-4":{
-            "AbelZhou\\TrieTree\\":"src/"
+            "AbelZhou\\Tree\\":"src/"
         }
     }
 }
