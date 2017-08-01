@@ -15,6 +15,7 @@ namespace AbelZhou\Tree;
  */
 class TrieTree {
     protected $nodeTree = [];
+    protected $count = 0;
 
     /**
      * 构造
@@ -70,8 +71,13 @@ class TrieTree {
             $childTree = &$this->_appendWordToTree($childTree, $code, $word, $is_end, $data, $str);
 
         }
+        $this->count++;
         unset($childTree);
         return $this;
+    }
+
+    public function getCount(){
+        return $this->count;
     }
 
     /**
