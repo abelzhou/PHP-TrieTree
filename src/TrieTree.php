@@ -76,7 +76,7 @@ class TrieTree {
         return $this;
     }
 
-    public function getCount(){
+    public function getCount() {
         return $this->count;
     }
 
@@ -142,27 +142,28 @@ class TrieTree {
         $arr_len = count($search_keys);
         $current_index = 0;
         for ($i = 0; $i < $arr_len; $i++) {
-//            print_r($i . '+' . PHP_EOL);
             //若命中了一个索引 则继续向下寻找
             if (isset($tree[$search_keys[$i]])) {
                 $node = $tree[$search_keys[$i]];
                 if ($node['end']) {
+//                    print_r(PHP_EOL.$i . '+' . PHP_EOL);
                     //发现结尾 将原词以及自定义属性纳入返回结果集中
                     $hit_arr[md5($node['full'])] = array(
                         'words' => $node['full'],
                         'data' => $node['data']
                     );
                     if (empty($node['child'])) {
-                        //若不存在子集，检索游标还原，字码游标下移
+                        //若不存在子集，检索游标还原
                         $i = $current_index;
+                        //还原检索集合
+                        $tree = $this->nodeTree;
+                        //字码游标下移
                         $current_index++;
-                        continue;
                     } else {
                         //存在子集重定义检索tree
                         $tree = $tree[$search_keys[$i]]['child'];
-                        $current_index++;
-                        continue;
                     }
+                    continue;
                 } else {
                     //没发现结尾继续向下检索
                     $tree = $tree[$search_keys[$i]]['child'];
@@ -178,7 +179,6 @@ class TrieTree {
 
         unset($tree, $search_keys);
         return $hit_arr;
-
     }
 
     /**
@@ -186,8 +186,7 @@ class TrieTree {
      * @param $str
      * @return array
      */
-    private
-    function _convertStrToH($str) {
+    private function _convertStrToH($str) {
         $len = strlen($str);
         $chars = [];
         for ($i = 0; $i < $len; $i++) {
