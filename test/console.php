@@ -7,8 +7,6 @@
  */
 
 
-
-
 require "../src/TrieTree.php";
 
 $str = file_get_contents("./dict.txt");
@@ -58,6 +56,12 @@ EOF新华社北京7月28日电;
 人前跟会员宣传要做好事，以慈善家包装自己的张天明，背后却在大肆敛财。综合张天明自己供述联国和公安部门调查，张天明把非法所得的十余亿元，用于给自己和家人购置大量资产，如在昆明以自己控股公司的名义花费2.2亿元购买了一座大厦。办案民警介绍说，张天明的妻子在逃跑时，随身携带了140多万元现金、29张银行卡，仅抽查的8张卡中的资金就有1100多万元。
 “我愿意现身说法，\"善心汇\"成立之初就是为了取得个人利益，我个人深深地感到悔恨和愧疚，\"善心汇\"如今变成了\"恶心汇\"。”在接受记者采访时，张天明说道，“不劳而获是走不通的。希望大家不要在错误道路上越走越远，能够真正意识到，这种模式的危害。”" 
 EOF;
-echo microtime(true);
+$t1 = microtime(true);
 var_dump($tree->search($str));
-echo microtime(true);
+$t2 = microtime(true);
+echo 'SearchTime{' . ($t2 - $t1) . '}s'.PHP_EOL;
+
+$del_res = $tree->delete("现金");
+$t3 = microtime(true);
+echo 'DELETE RES:'.$del_res.PHP_EOL;
+var_dump($tree->search($str));

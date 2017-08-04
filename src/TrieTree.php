@@ -26,6 +26,68 @@ class TrieTree {
     }
 
     /**
+     * 从树种摘除一个文本
+     * @param $str
+     */
+    public function delete($str) {
+        $str = trim($str);
+        $delstr_arr = $this->_convertStrToH($str);
+        $len = count($delstr_arr);
+        //提取树
+        $childTree = &$this->nodeTree;
+        $del_index = array();
+        //提取树中的相关索引
+        for ($i = 0; $i < $len; $i++) {
+            $code = $delstr_arr[$i];
+            //命中将其纳入索引范围
+            if (isset($childTree[$code])) {
+                //del tree
+                $del_index[$i] = [
+                    'code' => $code,
+                    'index' => &$childTree[$code]
+                ];
+                //若检索到最后一个字，检查是否是一个关键词的末梢
+                if ($i == ($len - 1) && !$childTree[$code]['end']) {
+                    return false;
+                }
+                $childTree = &$childTree[$code]['child'];
+            } else {
+                //发现没有命中 删除失败
+                return false;
+            }
+        }
+        $idx = $len - 1;
+        //只有一个字 直接删除
+        if ($idx == 0) {
+            if (count($del_index[$idx]['index']['child']) == 0) {
+                unset($this->nodeTree[$del_index[$idx]['code']]);
+                return true;
+            }
+        }
+        //末梢为关键词结尾，且存在子集 清除结尾标签
+        if (count($del_index[$idx]['index']['child']) > 0) {
+            $del_index[$idx]['index']['end'] = false;
+            $del_index[$idx]['index']['data'] = array();
+            unset($del_index[$idx]['index']['full']);
+            return true;
+        }
+        //以下为末梢不存在子集的情况
+        //倒序检索 子集大于2的 清除child
+        for (; $idx >= 0; $idx--) {
+            //检测子集 若发现联字情况 检测是否为其他关键词结尾
+            if (count($del_index[$idx]['index']['child']) > 0) {
+                if ($del_index[$idx]['index']['end'] == true) {
+                    //清空子集
+                    $child_code = $del_index[$idx + 1]['code'];
+                    unset($del_index[$idx]['index']['child'][$child_code]);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * ADD words [UTF8]
      * 增加新特性，在质感末梢增加自定义数组
      * @param $str 添加的词

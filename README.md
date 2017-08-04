@@ -7,6 +7,8 @@
 	- 支持命中多个返回
 	- 支持在树梢增加自定义数组 [替换内容] 
 	- 性能提升10倍
+- v3.0
+    - 增加删除特性 
 
 ## 示例
 ```php
@@ -31,6 +33,11 @@ var_dump($res);
 
 $res = $tree->search("我叫李四喜");
 var_dump($res);
+
+//删除
+$res = $tree->delete("张三");
+$res = $tree->search("张三");
+var_dump($res);
 ```
 
 ## 使用场景
@@ -39,7 +46,7 @@ var_dump($res);
 
 ## 性能
 test目录下有个1.5w左右的敏感词
-mac下检索耗时2毫秒左右
+mac下检索耗时2~3毫秒左右
 
 
 ## composer安装
