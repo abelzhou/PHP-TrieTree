@@ -71,17 +71,20 @@ class TrieTree {
             unset($del_index[$idx]['index']['full']);
             return true;
         }
+//        var_dump($this->nodeTree['e59bbd']);exit();
         //以下为末梢不存在子集的情况
         //倒序检索 子集大于2的 清除child
         for (; $idx >= 0; $idx--) {
             //检测子集 若发现联字情况 检测是否为其他关键词结尾
             if (count($del_index[$idx]['index']['child']) > 0) {
-                if ($del_index[$idx]['index']['end'] == true) {
+                //遇到结束标记或者count>1的未结束节点直接清空子集跳出
+                if ($del_index[$idx]['index']['end'] == true || $del_index[$idx]['index']['child'] > 1) {
                     //清空子集
                     $child_code = $del_index[$idx + 1]['code'];
                     unset($del_index[$idx]['index']['child'][$child_code]);
                     return true;
                 }
+
             }
         }
         return false;
