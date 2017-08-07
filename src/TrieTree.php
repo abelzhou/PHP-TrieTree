@@ -200,7 +200,7 @@ class TrieTree {
         $search_keys = $this->_convertStrToH($search);
         //命中集合
         $hit_arr = array();
-        $tree = $this->nodeTree;
+        $tree = &$this->nodeTree;
         $arr_len = count($search_keys);
         $current_index = 0;
         for ($i = 0; $i < $arr_len; $i++) {
@@ -218,23 +218,26 @@ class TrieTree {
                         //若不存在子集，检索游标还原
                         $i = $current_index;
                         //还原检索集合
-                        $tree = $this->nodeTree;
+                        $tree = &$this->nodeTree;
                         //字码游标下移
-                        $current_index++;
+//                        $current_index++;
                     } else {
                         //存在子集重定义检索tree
-                        $tree = $tree[$search_keys[$i]]['child'];
+                        $tree = &$tree[$search_keys[$i]]['child'];
                     }
                     continue;
                 } else {
                     //没发现结尾继续向下检索
-                    $tree = $tree[$search_keys[$i]]['child'];
+                    $tree = &$tree[$search_keys[$i]]['child'];
                     continue;
                 }
             } else {
+                //还原检索起点
+                $i = $current_index;
                 //还原tree
+                $tree = &$this->nodeTree;
+                //字码位移
                 $current_index++;
-                $tree = $this->nodeTree;
                 continue;
             }
         }
