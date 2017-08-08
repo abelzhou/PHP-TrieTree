@@ -223,7 +223,7 @@ class TrieTree {
                         //还原检索集合
                         $tree = &$this->nodeTree;
                         //字码游标下移
-//                        $current_index++;
+                        $current_index++;
                     } else {
                         //存在子集重定义检索tree
                         $tree = &$tree[$search_keys[$i]]['child'];
