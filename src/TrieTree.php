@@ -29,7 +29,7 @@ class TrieTree {
      * 从树种摘除一个文本
      * @param $str
      */
-    public function delete($str) {
+    public function delete($str,$deltree=false) {
         $str = trim($str);
         $delstr_arr = $this->_convertStrToH($str);
         $len = count($delstr_arr);
@@ -57,6 +57,11 @@ class TrieTree {
             }
         }
         $idx = $len - 1;
+        //删除整棵树
+        if($deltree){
+            //清空子集
+            $del_index[$idx]['index']['child']=array();
+        }
         //只有一个字 直接删除
         if ($idx == 0) {
             if (count($del_index[$idx]['index']['child']) == 0) {
