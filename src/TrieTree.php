@@ -29,7 +29,7 @@ class TrieTree {
      * 从树种摘除一个文本
      * @param $str
      */
-    public function delete($str,$deltree=false) {
+    public function delete($str, $deltree = false) {
         $str = trim($str);
         $delstr_arr = $this->_convertStrToH($str);
         $len = count($delstr_arr);
@@ -58,9 +58,9 @@ class TrieTree {
         }
         $idx = $len - 1;
         //删除整棵树
-        if($deltree){
+        if ($deltree) {
             //清空子集
-            $del_index[$idx]['index']['child']=array();
+            $del_index[$idx]['index']['child'] = array();
         }
         //只有一个字 直接删除
         if ($idx == 0) {
@@ -216,12 +216,17 @@ class TrieTree {
             if (isset($tree[$search_keys[$i]])) {
                 $node = $tree[$search_keys[$i]];
                 if ($node['end']) {
-//                    print_r(PHP_EOL.$i . '+' . PHP_EOL);
-                    //发现结尾 将原词以及自定义属性纳入返回结果集中
-                    $hit_arr[md5($node['full'])] = array(
-                        'words' => $node['full'],
-                        'data' => $node['data']
-                    );
+                    //发现结尾 将原词以及自定义属性纳入返回结果集中 3.1 增加词频统计
+                    $key = md5($node['full']);
+                    if (isset($hit_arr[$key])) {
+                        $hit_arr[$key]['count'] += 1;
+                    } else {
+                        $hit_arr[$key] = array(
+                            'words' => $node['full'],
+                            'data' => $node['data'],
+                            'count' => 1
+                        );
+                    }
                     if (empty($node['child'])) {
                         //若不存在子集，检索游标还原
                         $i = $current_index;
