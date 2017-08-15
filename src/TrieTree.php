@@ -96,7 +96,7 @@ class TrieTree {
     }
 
     /**
-     * ADD words [UTF8]
+     * ADD word [UTF8]
      * 增加新特性，在质感末梢增加自定义数组
      * @param $str 添加的词
      * @param array $data 添加词的附加属性
@@ -222,7 +222,7 @@ class TrieTree {
                         $hit_arr[$key]['count'] += 1;
                     } else {
                         $hit_arr[$key] = array(
-                            'words' => $node['full'],
+                            'word' => $node['full'],
                             'data' => $node['data'],
                             'count' => 1
                         );
