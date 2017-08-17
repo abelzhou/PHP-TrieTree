@@ -31,7 +31,7 @@ class TrieTree {
      */
     public function delete($str, $deltree = false) {
         $str = trim($str);
-        $delstr_arr = $this->_convertStrToH($str);
+        $delstr_arr = $this->convertStrToH($str);
         $len = count($delstr_arr);
         //提取树
         $childTree = &$this->nodeTree;
@@ -205,7 +205,7 @@ class TrieTree {
         if (empty($search)) {
             return false;
         }
-        $search_keys = $this->_convertStrToH($search);
+        $search_keys = $this->convertStrToH($search);
         //命中集合
         $hit_arr = array();
         $tree = &$this->nodeTree;
@@ -264,7 +264,7 @@ class TrieTree {
      * @param $str
      * @return array
      */
-    private function _convertStrToH($str) {
+    public function convertStrToH($str) {
         $len = strlen($str);
         $chars = [];
         for ($i = 0; $i < $len; $i++) {
