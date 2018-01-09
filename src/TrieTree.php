@@ -185,6 +185,48 @@ class TrieTree {
         return $this->nodeTree;
     }
 
+    public function getTreeWord($word, $count = 0) {
+        $search = trim($word);
+        if (empty($search)) {
+            return false;
+        }
+        if($count===0){
+            $count = 9999;
+        }
+
+        $word_keys = $this->convertStrToH($search);
+        $tree = &$this->nodeTree;
+        $key_count = count($word_keys);
+        $words = [];
+        foreach ($word_keys as $key => $val) {
+            if (isset($tree[$val])) {
+                //检测当前词语是否已命中
+                if ($key == $key_count - 1 && $tree[$val]['end'] == true) {
+                    $words[] = ["word" => $tree[$val]['full'], "data" => $tree[$val]['data']];
+                }
+                $tree = &$tree[$val]["child"];
+            }else{
+                //第一个字符都没有命中
+                if($key == 0){
+                    return [];
+                }
+            }
+        }
+        $this->_getTreeWord($tree, $count, $words);
+        return $words;
+    }
+
+    private function _getTreeWord(&$child, $count, &$words = array()) {
+        foreach ($child as $node) {
+            if ($node['end'] == true) {
+                $words[] = ["word" => $node['full'], "data" => $node['data']];
+            }
+            if (!empty($node['child']) && $count >= count($words)) {
+                $this->_getTreeWord($node['child'], $count, $words);
+            }
+        }
+    }
+
     /**
      * overwrite tostring.
      * @return string
