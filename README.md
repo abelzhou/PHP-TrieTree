@@ -13,6 +13,9 @@
     - 解决命中不全BUG
     - 3.1
         - 增加词频统计
+    - 3.5
+        - 清除词频统计 [没有什么意义]
+        - 增加Suggestion特性  根据某个word提取相关的词语
 
 ## 注意
 - 在即时场景中（即时更新关键词），如果关键词数量较大，到十万甚至百万级别，尽量不要使用CGI模式，首次加载需要较大的性能开销，多个进程同时使用会造成一定的内存浪费，整体性能会下降，会拖垮web服务。这种情况下建议使用swoole单独封装服务，目前十万级别的关键词，已经在生产环境中验证过并运行良好。
@@ -47,11 +50,39 @@ var_dump($res);
 $res = $tree->delete("张三");
 //删除整棵树 连带“张三”和张三下的“张三四”一并删除
 $tree->delete("张三",true);
+
+
+
+//拼音检测
+$tree->append("zhangsan","",true,"张三");
+$tree->append("zhangsan","",true,"张伞");
+
+$t1 = microtime(true);
+var_dump($tree->getTreeWord("zh"));
+$t2 = microtime(true);
+echo 'getTreeWordPinyin{' . ($t2 - $t1) . '}s'.PHP_EOL;
+
+
+//replace & delete
+$tree->append("z","",true,"在");
+$tree->append("z","",true,"走");
+$tree->append("z","",true,"做");
+var_dump($tree->getTreeWord("z",4));
+//覆盖
+$tree->append("z",array("1"=>1),true,"做");
+var_dump($tree->getTreeWord("z",4));
+//删除
+$tree->delete("z",false,true,"在");
+var_dump($tree->getTreeWord("z",4));
+$tree->delete("z",false,true,"走");
+$tree->delete("z",false,true,"做");
+var_dump($tree->getTreeWord("z", 4));
 ```
 
 ## 使用场景
 - 敏感词过滤
 - 内链建设
+- 搜索框提示
 
 ## 性能
 test目录下有个1.5w左右的敏感词。

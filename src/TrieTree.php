@@ -15,7 +15,6 @@ namespace AbelZhou\Tree;
  */
 class TrieTree {
     protected $nodeTree = [];
-    protected $count = 0;
 
     /**
      * 构造
@@ -27,10 +26,15 @@ class TrieTree {
 
     /**
      * 从树种摘除一个文本
-     * @param $str
+     * @param $index_str
      */
-    public function delete($str, $deltree = false) {
-        $str = trim($str);
+    public function delete($index_str, $deltree = false, $is_py = false, $chinese = "") {
+        $str = trim($index_str);
+        $chinese = trim($chinese);
+        if ($is_py && empty($chinese)) {
+            return false;
+        }
+
         $delstr_arr = $this->convertStrToH($str);
         $len = count($delstr_arr);
         //提取树
@@ -64,10 +68,33 @@ class TrieTree {
         }
         //只有一个字 直接删除
         if ($idx == 0) {
-            if (count($del_index[$idx]['index']['child']) == 0) {
-                unset($this->nodeTree[$del_index[$idx]['code']]);
-                return true;
+            //如果是拼音 只删除相应的拼音索引
+            if ($is_py) {
+                //清除单个拼音索引
+                if (isset($this->nodeTree[$del_index[$idx]['code']]['chinese_list'])) {
+                    $is_del = false;
+                    foreach ($this->nodeTree[$del_index[$idx]['code']]['chinese_list'] as $key=>$node) {
+                        if ($node['word'] == $chinese){
+                            unset($this->nodeTree[$del_index[$idx]['code']]['chinese_list'][$key]);
+                            $is_del = true;
+                            break;
+                        }
+                    }
+                    if($is_del && 0 != count($this->nodeTree[$del_index[$idx]['code']]['chinese_list'])){
+                         return true;
+                    }
+                    if(!$is_del){
+                        return false;
+                    }
+                    //如果依然存在中文数据 则继续向下跑删除节点
+                }
+            }else{
+                if (count($del_index[$idx]['index']['child']) == 0) {
+                    unset($this->nodeTree[$del_index[$idx]['code']]);
+                    return true;
+                }
             }
+
         }
         //末梢为关键词结尾，且存在子集 清除结尾标签
         if (count($del_index[$idx]['index']['child']) > 0) {
@@ -98,12 +125,17 @@ class TrieTree {
     /**
      * ADD word [UTF8]
      * 增加新特性，在质感末梢增加自定义数组
-     * @param $str 添加的词
+     * @param $index_str 添加的词
      * @param array $data 添加词的附加属性
      * @return $this
      */
-    public function append($str, $data = array()) {
-        $str = trim($str);
+    public function append($index_str, $data = array(), $is_py = false, $chinese = '') {
+        $str = trim($index_str);
+        $chinese = trim($chinese);
+        if ($is_py && empty($chinese)) {
+            return false;
+        }
+
         $childTree = &$this->nodeTree;
         $len = strlen($str);
         for ($i = 0; $i < $len; $i++) {
@@ -137,17 +169,14 @@ class TrieTree {
             }
             if ($i == ($len - 1)) {
                 $is_end = true;
+                if ($is_py) {
+                    $str = $chinese;
+                }
             }
-            $childTree = &$this->_appendWordToTree($childTree, $code, $word, $is_end, $data, $str);
-
+            $childTree = &$this->_appendWordToTree($childTree, $code, $word, $is_end, $data, $str, $is_py);
         }
-        $this->count++;
         unset($childTree);
         return $this;
-    }
-
-    public function getCount() {
-        return $this->count;
     }
 
     /**
@@ -160,18 +189,36 @@ class TrieTree {
      * @param string $full_str
      * @return mixed
      */
-    private function &_appendWordToTree(&$tree, $code, $word, $end = false, $data = array(), $full_str = '') {
+    private function &_appendWordToTree(&$tree, $code, $word, $end = false, $data = array(), $full_str = '', $is_py) {
         if (!isset($tree[$code])) {
             $tree[$code] = array(
                 'end' => $end,
                 'child' => array(),
-                'value' => $word
+                'value' => $word,
             );
         }
         if ($end) {
             $tree[$code]['end'] = true;
-            $tree[$code]['data'] = $data;
-            $tree[$code]['full'] = $full_str;
+            $tree[$code]['is_py'] = $is_py;
+            //拼音不需要full 拼音根据读音多样性对应多个词语 重复词语覆盖data
+            if ($is_py) {
+                $is_change = false;
+                if(isset($tree[$code]["chinese_list"]) && count($tree[$code]["chinese_list"])>0) {
+                    foreach ($tree[$code]["chinese_list"] as $key => &$node) {
+                        if ($node['word'] == $full_str) {
+                            $node['data'] = $data;
+                            $is_change = true;
+                            break;
+                        }
+                    }
+                }
+                if(!$is_change){
+                    $tree[$code]['chinese_list'][] = ["word" => $full_str, "data" => $data];
+                }
+            } else {
+                $tree[$code]['full'] = $full_str;
+                $tree[$code]['data'] = $data;
+            }
         }
 
         return $tree[$code]['child'];
@@ -185,13 +232,19 @@ class TrieTree {
         return $this->nodeTree;
     }
 
-    public function getTreeWord($word, $count = 0) {
+    /**
+     * 匹配下面的全部词语
+     * @param $word
+     * @param int $deep 检索深度 检索之后的词语数量可能会大于这个数字
+     * @return array|bool
+     */
+    public function getTreeWord($word, $deep = 0) {
         $search = trim($word);
         if (empty($search)) {
             return false;
         }
-        if($count===0){
-            $count = 9999;
+        if ($deep === 0) {
+            $deep = 999;
         }
 
         $word_keys = $this->convertStrToH($search);
@@ -202,27 +255,35 @@ class TrieTree {
             if (isset($tree[$val])) {
                 //检测当前词语是否已命中
                 if ($key == $key_count - 1 && $tree[$val]['end'] == true) {
-                    $words[] = ["word" => $tree[$val]['full'], "data" => $tree[$val]['data']];
+                    if (isset($tree[$val]['chinese_list'])) {
+                        $words = array_merge($words, $tree[$val]['chinese_list']);
+                    } else {
+                        $words[] = ["word" => $tree[$val]['full'], "data" => $tree[$val]['data']];
+                    }
                 }
                 $tree = &$tree[$val]["child"];
-            }else{
+            } else {
                 //第一个字符都没有命中
-                if($key == 0){
+                if ($key == 0) {
                     return [];
                 }
             }
         }
-        $this->_getTreeWord($tree, $count, $words);
+        $this->_getTreeWord($tree, $deep, $words);
         return $words;
     }
 
-    private function _getTreeWord(&$child, $count, &$words = array()) {
+    private function _getTreeWord(&$child, $deep, &$words = array()) {
         foreach ($child as $node) {
             if ($node['end'] == true) {
-                $words[] = ["word" => $node['full'], "data" => $node['data']];
+                if (isset($node['chinese_list'])) {
+                    $words = array_merge($words, $node['chinese_list']);
+                } else {
+                    $words[] = ["word" => $node['full'], "data" => $node['data']];
+                }
             }
-            if (!empty($node['child']) && $count >= count($words)) {
-                $this->_getTreeWord($node['child'], $count, $words);
+            if (!empty($node['child']) && $deep >= count($words)) {
+                $this->_getTreeWord($node['child'], $deep, $words);
             }
         }
     }

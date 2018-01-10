@@ -65,7 +65,35 @@ $del_res = $tree->delete("现金");
 $t3 = microtime(true);
 echo 'DELETE RES:'.$del_res.PHP_EOL;
 var_dump($tree->search($str));
+
 $t1 = microtime(true);
-var_dump($tree->getTreeWord("江"));
+var_dump($tree->getTreeWord("a"));
 $t2 = microtime(true);
-echo 'SearchTime{' . ($t2 - $t1) . '}s'.PHP_EOL;
+echo 'getTreeWord{' . ($t2 - $t1) . '}s'.PHP_EOL;
+
+
+
+//拼音检测
+$tree->append("zhangsan","",true,"张三");
+$tree->append("zhangsan","",true,"张伞");
+
+$t1 = microtime(true);
+var_dump($tree->getTreeWord("zh"));
+$t2 = microtime(true);
+echo 'getTreeWordPinyin{' . ($t2 - $t1) . '}s'.PHP_EOL;
+
+
+//replace & delete
+$tree->append("z","",true,"在");
+$tree->append("z","",true,"走");
+$tree->append("z","",true,"做");
+var_dump($tree->getTreeWord("z",4));
+//覆盖
+$tree->append("z",array("1"=>1),true,"做");
+var_dump($tree->getTreeWord("z",4));
+//删除
+$tree->delete("z",false,true,"在");
+var_dump($tree->getTreeWord("z",4));
+$tree->delete("z",false,true,"走");
+$tree->delete("z",false,true,"做");
+var_dump($tree->getTreeWord("z", 4));
