@@ -16,6 +16,9 @@
     "require": {
         "php": ">5.3.0"
     },
+    "require-dev": {
+        "overtrue/pinyin":"~3.0"
+    },
     "autoload":{
         "psr-4":{
             "AbelZhou\\Tree\\":"src/"
