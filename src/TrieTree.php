@@ -263,10 +263,10 @@ class TrieTree {
                 }
                 $tree = &$tree[$val]["child"];
             } else {
-                //第一个字符都没有命中
-                if ($key == 0) {
+                //遇到没有命中的返回
+//                if ($key == 0) {
                     return [];
-                }
+//                }
             }
         }
         $this->_getTreeWord($tree, $deep, $words);
