@@ -19,6 +19,9 @@
             - 所有检索依据字典
             - 提取关联词均为从左至右原则
             - 因为个人更倾向其为一个“组件服务”，所以增加拼音索引需要主动增加
+    - 3.6
+        - 修正一个关联词的小bug
+        - 增加demo httpserver
 
 ## 使用场景
 - 敏感词过滤
@@ -37,7 +40,12 @@ mac下检索耗时2~5毫秒左右
 - 要严格控制关键词深度，关键词不宜过长，汉字的话最好10个汉字以内。
 - 在非即时场景中可以使用计划任务、常驻脚本等方式对内容进行处理。
 
-## 示例
+## DEMO
+![image](https://raw.githubusercontent.com/AbelZhou/PHP-TrieTree/master/demo/demo.gif)
+- 需要swoole扩展，直接运行swoole_server.php  
+- 测试内容为5000个人名  
+
+## 代码示例
 ```php
 <?php
 require "../src/TrieTree.php";
