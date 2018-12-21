@@ -1,4 +1,11 @@
 # PHP-TrieTree
+
+
+## composer安装
+```
+composer require abelzhou/php-trie-tree
+```
+
 ## 这是一个PHP的字典树
 
 - v1.0
@@ -105,8 +112,4 @@ $tree->delete("z",false,true,"做");
 var_dump($tree->getTreeWord("z", 4));
 ```
 
-## composer安装
-```
-composer require abelzhou/php-trie-tree
-```
 
