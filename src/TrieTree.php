@@ -189,7 +189,7 @@ class TrieTree {
      * @param string $full_str
      * @return mixed
      */
-    private function &_appendWordToTree(&$tree, $code, $word, $end = false, $data = array(), $full_str = '', $is_py) {
+    private function &_appendWordToTree(&$tree, $code, $word, $end = false, $data = array(), $full_str = '', $is_py = false) {
         if (!isset($tree[$code])) {
             $tree[$code] = array(
                 'end' => $end,
